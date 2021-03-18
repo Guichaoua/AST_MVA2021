@@ -14,16 +14,16 @@ def line_graph(num_vertices, normalize=True):
 
 def grid_graph(num_vertices, normalize=True):
     W = np.zeros(shape=(num_vertices, num_vertices))
-    length = int(np.sqrt(n))
+    length = int(np.sqrt(num_vertices))
     for i in range(0, length):
         for j in range(0, length):
             if i>0:
                 W[i+j*length,(i-1)+j*length] = 1
             if j>0:
                 W[i+j*length,i+(j-1)*length] = 1
-            if i<m-1:
+            if i<length-1:
                 W[i+j*length,(i+1)+j*length] = 1
-            if j<m-1:
+            if j<length-1:
                 W[i+j*length,i+(j+1)*length] = 1
     D = np.diag(np.sum(W, axis=1))
     L = D - W
