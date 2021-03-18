@@ -5,7 +5,6 @@ from sklearn.metrics import f1_score
 
 def F1_score(true_L, pred_L, threshold=1e-1):
     assert true_L.shape == pred_L.shape
-    rwe = remove_weak_edges(threshold)
     n = true_L.shape[0]
     true_edges = []
     pred_edges = []
