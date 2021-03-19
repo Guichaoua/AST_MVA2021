@@ -24,3 +24,13 @@ def heat_signal_generator(laplacian, diffusion_factors, n_samples):
         # nous calculons finalement le signal sur le graph
         samples[i] = np.ravel(dynamic_matrix @ activations[i])
     return samples, activations
+
+def smooth_signal_generator(laplacian, n_samples, noise=0.5):
+    num_vertices = laplacian.shape[0]
+    eigenvalues, eigenvectors = np.linalg.eigh(laplacian)
+    pseudo_inverse = np.linalg.pinv(np.diag(eigenvalues), hermitian=True)
+    samples = np.zeros(shape=(n_samples, num_vertices))
+    for i in range(n_samples):
+        latent = np.random.multivariate_normal(mean=np.zeros(num_vertices, ), cov=pseudo_inverse)
+        samples[i] = eigenvectors @ latent + np.random.normal(scale=noise, size=(num_vertices, ))
+    return samples
