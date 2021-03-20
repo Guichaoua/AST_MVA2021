@@ -38,8 +38,9 @@ def rbf_random_graph(num_vertices, sigma=0.5, kappa=0.6, normalize=True):
     for i in range(0, num_vertices):
         for j in range(i+1, num_vertices):
             dist = np.linalg.norm(vertices[i]-vertices[j])
-            if dist < kappa:
-                W[j, i] = W[i, j] = np.exp(-dist**2/(2*sigma**2))
+            weight = np.exp(-dist**2/(2*sigma**2))
+            if weight < kappa:
+                W[j, i] = W[i, j] = weight
     D = np.diag(np.sum(W, axis=1))
     L = D - W
     if normalize:
