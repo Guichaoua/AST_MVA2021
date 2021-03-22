@@ -9,8 +9,8 @@ def dessin_graphe(P,Vx,Vy,f='black') :
     P = np.clip(P,-1,1)
     for i in range(P.shape[0]):
         for j in range(i) :
+            col = (1,1,1)
             if P[i,j] != 0:
-                col = (1,1,1)
                 if  P[i,j] >0:
                     col = tuple((1-P[i,j])*np.array((1,1,1))+P[i,j]*np.array((1,0,0)))
                 else:
@@ -24,8 +24,9 @@ def dessin_graphe(P,Vx,Vy,f='black') :
     plt.show()
 
 
-def init_graph(nom,n,k = 3):
+def init_graph(nom,n,k = 3,sigma=0.5,kappa=0.6):
     """ renvoie la matrice de précision d'un matrice de forme mot et de n sommets et le dessine ? """
+    np.random.seed(0)
     if nom == "ligne" :
         A = np.eye(n, n, 1)+np.eye(n, n, -1)
         Vx = np.linspace(-n//2,n//2,n)
@@ -66,8 +67,18 @@ def init_graph(nom,n,k = 3):
             for j in ll[1:k+1]:
                 A[i][j[0]] = 1
                 A[j[0]][i] = 1
+    elif nom == "rbf_random":
+        vertices = np.random.random(size=(n, 2))
+        Vx = vertices[:,0]
+        Vy = vertices[:,1]
+        A = np.zeros((n, n))
+        for i in range(0, n):
+            for j in range(i+1, n):
+                dist = np.linalg.norm(vertices[i]-vertices[j])
+                if dist < kappa:
+                    A[j, i] = A[i, j] = np.exp(-dist**2/(2*sigma**2))
     else :
-        print("Ce nom de graphe n'est pas connu, choisir ligne/cyclique/grilleCarree/kvoisins")
+        print("Ce nom de graphe n'est pas connu, choisir ligne/cyclique/grilleCarree/kvoisins/rbf_random")
         A,Vx,Vy = [],[],[]
 
     return A,Vx,Vy
