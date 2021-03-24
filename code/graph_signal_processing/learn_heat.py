@@ -153,8 +153,8 @@ def learn_heat(samples, n_step=20,  alpha=1e-6, beta=1e-2,
                tol=1e-2):
     num_samples, num_vertices = samples.shape
     # initialisation
-    diffusion_factors = np.sort(np.array([2+np.random.random() for _ in range(s)]))
-    diffusion_factors = np.array(true_tau)
+    diffusion_factors = np.sort(np.array([1+np.random.random() for _ in range(s)]))
+    #diffusion_factors = np.array(true_tau)
     laplacian = rbf_random_graph(num_vertices)
     dynamic = computing_dynamic_matrix(laplacian, diffusion_factors)
     activations = np.random.normal(size=(num_samples, s*num_vertices))
@@ -206,10 +206,10 @@ def learn_heat(samples, n_step=20,  alpha=1e-6, beta=1e-2,
         laplacian = new_laplacian
         dynamic = computing_dynamic_matrix(laplacian, diffusion_factors)
         # updating tau
-        #e_ = gamma3 * lipschitz_constant_wrt_tau(samples, laplacian, activations, diffusion_factors)
-        #grad_tau = grad_wrt_tau(samples, laplacian, activations, diffusion_factors)
-        #diffusion_factors = np.maximum(- 1 / e_ * (grad_tau - e_ * diffusion_factors),
-        #                               np.zeros(shape=(s,)))
-        #dynamic = computing_dynamic_matrix(laplacian, diffusion_factors)
+        e_ = gamma3 * lipschitz_constant_wrt_tau(samples, laplacian, activations, diffusion_factors)
+        grad_tau = grad_wrt_tau(samples, laplacian, activations, diffusion_factors)
+        diffusion_factors = np.maximum(- 1 / e_ * (grad_tau - e_ * diffusion_factors),
+                                       np.zeros(shape=(s,)))
+        dynamic = computing_dynamic_matrix(laplacian, diffusion_factors)
 
     return laplacian, activations, diffusion_factors
